@@ -23,10 +23,8 @@ module.exports = {
                 return res.status(404).json({ message: 'No user with that ID' })
             }
 
-            res.json({
-                user,
-                grade: await grade(req.params.userId),
-            });
+            res.json(user);
+
         } catch (err) {
             console.log(err);
             return res.status(500).json(err);
@@ -64,25 +62,15 @@ module.exports = {
     // Delete a user and remove them from the thought
     async deleteUser(req, res) {
         try {
-            const user = await User.findOneAndRemove({ _id: req.params.userId });
+            const user = await User.findOneAndDelete({ _id: req.params.userId });
 
             if (!user) {
                 return res.status(404).json({ message: 'No such user exists' });
             }
 
-            const thought = await Thought.findOneAndUpdate(
-                { users: req.params.userId },
-                { $pull: { users: req.params.userId } },
-                { new: true }
-            );
+            await Thought.deleteMany({ _id: { $in: user.thoughts } });
+            res.json({ message: 'User and thoughts deleted!' });
 
-            if (!thought) {
-                return res.status(404).json({
-                    message: 'User deleted, but no thoughts found',
-                });
-            }
-
-            res.json({ message: 'User successfully deleted' });
         } catch (err) {
             console.log(err);
             res.status(500).json(err);
@@ -117,7 +105,7 @@ module.exports = {
         try {
             const user = await User.findOneAndUpdate(
                 { _id: req.params.userId },
-                { $pull: { friend: { friendId: req.params.friendId } } },
+                { $pull: { friends: { friendId: req.params.friendId } } },
                 { runValidators: true, new: true }
             );
 
