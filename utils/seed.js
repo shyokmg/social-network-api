@@ -2,10 +2,8 @@ const connection = require('../config/connection');
 const { User, Thought } = require('../models');
 const {
   getRandomThoughts,
-  getRandomReactions,
   getRandomArrItem,
   getRandomUsernames,
-  getRandomFriends,
 } = require('./data');
 
 // Start the seeding runtime timer
@@ -24,44 +22,26 @@ connection.once('open', async () => {
     await connection.dropCollection('users');
   }
 
-  // Empty arrays for randomly generated thoughts and reactions
-  const reactions = [...getRandomReactions(10)];
-  const thoughts = [];
-
-  // Makes thought array
-  const makeThought = (text) => {
-    thoughts.push({
-      thoughtText: getRandomThoughts(),
-      username: getRandomUsernames(),
-      reactions: [reactions[getRandomArrItem(reactions)]._id],
-    });
-  };
-
   const users = [];
-  for (let i = 0; i < 19; i++) {
+  for (let i = 0; i < 10; i++) {
     const username = getRandomUsernames();
-    const email = `${username}@email.com`
-    const friends = [...getRandomFriends(Math.floor(Math.random() * 19))]
+    const email = `${username}@email.com`;
     users.push({
       username,
       email,
-      friends: [friends]
     });
   }
 
 
+  // Makes thought array
+  const thoughts = getRandomThoughts(10);
 
-  // Wait for the reactions to be inserted into the database
-  await Thought.collection.insertMany(reactions);
-
-  // For each of the reactions that exist, make a random thought of 10 words
-  reactions.forEach(() => makePost(getRandomPost(10)));
-
-  // Wait for the thoughts array to be inserted into the database
-  await Post.collection.insertMany(thoughts);
+// Insert data to database
+  const userData = await User.collection.insertMany(users);
+  await Thought.collection.insertMany(thoughts);
 
   // Log out a pretty table for reactions and thoughts
-  console.table(reactions);
+  console.table(users);
   console.table(thoughts);
   console.timeEnd('seeding complete 🌱');
   process.exit(0);

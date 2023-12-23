@@ -1,24 +1,24 @@
 const usernames = [
-    "blue_rider",
-    "star-gazer",
-    "luna_lights",
-    "mountain_hiker",
-    "tech_wiz",
-    "dream_catcher",
-    "aqua-splash",
-    "fireflyjumper",
-    "midnight_rider",
-    "pixel_master",
-    "cosmic-traveler",
-    "shadow_walker",
-    "silver_arrow",
-    "electric_spark",
-    "nature_lover",
-    "jazz_junkie",
-    "moon_child",
-    "sunny_smiles",
-    "adventure_seeker",
-    "captain_marvel"
+  "rider",
+  "gazer",
+  "lights",
+  "hiker",
+  "wiz",
+  "catcher",
+  "splash",
+  "jumper",
+  "rider",
+  "master",
+  "traveler",
+  "walker",
+  "arrow",
+  "spark",
+  "lover",
+  "junkie",
+  "child",
+  "smiles",
+  "seeker",
+  "marvel"
 ]
 
   const thoughts = [
@@ -64,7 +64,8 @@ const usernames = [
   const genRandomIndex = (arr) => Math.floor(Math.random() * arr.length);
   
   // Gets a random username
-  const getRandomUsernames = () => getRandomArrItem(usernames);
+  const getRandomUsernames = () => 
+  `${getRandomArrItem(usernames)}_${getRandomArrItem(usernames)}`;
 
 // Function to generate random thoughts that we can add to the database. Includes thought reactions.
 const getRandomThoughts = (int) => {
@@ -81,9 +82,6 @@ const getRandomThoughts = (int) => {
 
 // Create the reactions that will be added to each thought
 const getThoughtReactions = (int) => {
-  if (int === 1) {
-    return getRandomArrItem(reactions);
-  }
   const results = [];
   for (let i = 0; i < int; i++) {
     results.push({
@@ -94,16 +92,6 @@ const getThoughtReactions = (int) => {
   return results;
 };
 
-// Function to generate random friends given a number (ex. 10 friends === getRandomFriends(10))
-const getRandomFriends = (int) => {
-  const results = [];
-  for (let i = 0; i < int; i++) {
-    results.push(getRandomUsernames);
-  }
-  return results;
-};
-
-
   // Export the functions for use in seed.js
-  module.exports = { getRandomArrItem, getRandomUsernames, getRandomThoughts, getRandomFriends };
+  module.exports = { getRandomArrItem, getRandomUsernames, getRandomThoughts };
   
