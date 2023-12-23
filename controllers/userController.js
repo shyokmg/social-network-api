@@ -68,8 +68,16 @@ module.exports = {
                 return res.status(404).json({ message: 'No such user exists' });
             }
 
+            // Delete associated thoughts from user
             await Thought.deleteMany({ _id: { $in: user.thoughts } });
             res.json({ message: 'User and thoughts deleted!' });
+
+            // Update users friend that have deleted user id
+            await User.updateMany(
+                { friends: req.params.userId },
+                { $pull: { friends: req.params.userId } },
+                { new: true }
+              );
 
         } catch (err) {
             console.log(err);
@@ -83,12 +91,14 @@ module.exports = {
         console.log(req.body);
 
         try {
+            // Update user who added friend
             const user = await User.findOneAndUpdate(
                 { _id: req.params.userId },
                 { $addToSet: { friends: req.body } },
                 { runValidators: true, new: true }
             );
-
+            
+            // Update user who was added by first user
             const user2 = await User.findOneAndUpdate(
                 { _id: req.body },
                 { $addToSet: { friends: req.params.userId } },
@@ -109,11 +119,13 @@ module.exports = {
     // Remove friend from a user
     async removeFriend(req, res) {
         try {
+            // Update user who removed friend
             const user = await User.findOneAndUpdate(
                 { _id: req.params.userId },
                 { $pull: { friends:req.params.friendId } },
                 { runValidators: true, new: true }
             );
+            // Update user who was removed by first user
             const user2 = await User.findOneAndUpdate(
                 { _id: req.params.friendId },
                 { $pull: { friends: req.params.userId } },
