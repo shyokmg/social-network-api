@@ -1,5 +1,7 @@
 const { Schema, Types } = require('mongoose');
+const {formatDate} = require('../utils/date');
 
+// Create reaction schema for thoughts
 const reactionSchema = new Schema(
   {
     reactionId: {
@@ -18,6 +20,7 @@ const reactionSchema = new Schema(
     createdAt: {
       type: Date,
       default: Date.now,
+      get: formatDate
     },
   },
   {
